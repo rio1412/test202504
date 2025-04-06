@@ -1,0 +1,24 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up environment variables
+      run: |
+        echo "LINE_ACCESS_TOKEN=${{ secrets.LINE_ACCESS_TOKEN }}" >> $GITHUB_ENV
+        echo "LINE_USER_ID=${{ secrets.LINE_USER_ID }}" >> $GITHUB_ENV
+        echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> $GITHUB_ENV
+
+    - name: Run the app
+      run: |
+        python app.py
