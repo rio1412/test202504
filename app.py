@@ -11,37 +11,20 @@ from oauth2client.service_account import ServiceAccountCredentials
 from dotenv import load_dotenv
 import os
 import json
+from oauth2client.service_account import ServiceAccountCredentials
 
-# .env ファイルを読み込む
-load_dotenv()
+# 環境変数からGoogleの認証情報を取得
+google_credentials_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
 
-# .env ファイルからキーを取得
-LINE_ACCESS_TOKEN = os.getenv("LINE_ACCESS_TOKEN")
-LINE_USER_ID = os.getenv("LINE_USER_ID")
-GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH")
+# JSONを辞書に変換
+credentials_info = json.loads(google_credentials_json)
 
-# LINE 通知を送信する関数
-def send_line_notify(message):
-    url = "https://api.line.me/v2/bot/message/push"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {LINE_ACCESS_TOKEN}"
-    }
-    payload = {
-        "to": LINE_USER_ID,
-        "messages": [
-            {
-                "type": "text",
-                "text": message
-            }
-        ]
-    }
-    response = requests.post(url, headers=headers, json=payload)
-    return response.json()
-
-# Google Sheets API 認証とデータ取得
+# サービスアカウントの認証情報を作成
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-credentials = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_CREDENTIALS_PATH, scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_info, scope)
+
+# 認証情報を使ってGoogle Sheets APIにアクセス
+import gspread
 gc = gspread.authorize(credentials)
 
 SPREADSHEET_NAME = "染め物在庫管理"
