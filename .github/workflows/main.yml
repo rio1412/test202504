@@ -18,6 +18,15 @@ jobs:
         echo "LINE_ACCESS_TOKEN=${{ secrets.LINE_ACCESS_TOKEN }}" >> $GITHUB_ENV
         echo "LINE_USER_ID=${{ secrets.LINE_USER_ID }}" >> $GITHUB_ENV
         echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" >> $GITHUB_ENV
+        echo "GOOGLE_CREDENTIALS_JSON=${{ secrets.GOOGLE_CREDENTIALS_JSON }}" >> $GITHUB_ENV
+
+    - name: Set up Google credentials
+      run: |
+        echo "${GOOGLE_CREDENTIALS_JSON}" > google-credentials.json
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
 
     - name: Run the app
       run: |
